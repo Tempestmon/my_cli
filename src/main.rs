@@ -104,7 +104,14 @@ struct Touch {}
 
 impl Executable for Touch {
     fn execute(&self, args: Option<Vec<String>>) -> Result<(), String> {
-        todo!()
+        match args {
+            None => {}
+            Some(a) => {
+                let path = Path::new(a.get(0).unwrap());
+                fs::File::create(path);
+            }
+        }
+        Ok(())
     }
 }
 
@@ -139,17 +146,13 @@ impl FromStr for Command {
 #[derive(Parser)]
 struct Cli {
     command: Option<String>,
-    argument: Option<String>,
+    argument: Option<Vec<String>>,
 }
 
 fn main() {
     let parsed = Cli::parse();
     let command = parsed.command;
     let arguments = parsed.argument;
-    let arguments = match arguments {
-        None => None,
-        Some(a) => Some(vec![a])
-    };
 
     let command = Command::from_str(command.expect("Got no command").as_str()).expect("Command is not supported");
 
